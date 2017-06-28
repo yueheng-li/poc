@@ -1,0 +1,62 @@
+<bean:beans xmlns="http://www.springframework.org/schema/batch"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+    ">
+
+	<!-- ############################################################################################## -->
+	<!-- 型番より、楽天、やまだ、Amazon、 ヨドバシWebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+	<job id="productSearchJob">
+		<step id="productSearchJob.step1">
+			<tasklet>
+				<chunk reader="productSearchItemReader" writer="productSearchItemWriter"
+					commit-interval="4">
+				</chunk>
+			</tasklet>
+		</step>
+	</job>
+
+	<bean:bean id="productSearchItemReader"
+		class="com.elecom.crawler.batch.reader.ProductSearchItemReader">
+	</bean:bean>
+
+	<bean:bean id="productSearchItemWriter"
+		class="com.elecom.crawler.batch.writer.ProductSearchItemWriter">
+	</bean:bean>
+	<!-- ############################################################################################## -->
+	<!-- 型番より、楽天、やまだ、Amazon、 ヨドバシWebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+
+
+	<!-- run every 10 seconds -->
+	<!-- ############################################################################################## -->
+	<!-- crawler trigger 10分ごと起動 -->
+	<!-- ############################################################################################## -->
+	<bean:bean id="crawlerProductSearchCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<bean:property name="jobDetail" ref="crawlerProductSearchJob" />
+		<bean:property name="cronExpression" value="* 1/10 * * * ?" />
+	</bean:bean>
+
+	<bean:bean id="crawlerProductSearchJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<bean:property name="jobClass"
+			value="com.elecom.crawler.batch.job.JobLauncherDetails" />
+		<bean:property name="group" value="quartz-batch" />
+		<bean:property name="jobDataAsMap">
+			<bean:map>
+				<bean:entry key="jobName" value="productSearchJob" />
+				<bean:entry key="jobLocator" value-ref="jobRegistry" />
+				<bean:entry key="jobLauncher" value-ref="jobLauncher" />
+			</bean:map>
+		</bean:property>
+	</bean:bean>
+	<!-- ############################################################################################## -->
+	
+
+</bean:beans>

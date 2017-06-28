@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elecom.crawler.mapper.CrawlerJobMapper">
+
+	<select id="selectAll" resultType="com.elecom.crawler.entity.CrawlerJob">
+		select c.crawler_job_id
+		,c.crawler_job_type
+		,c.crawler_search_url
+		from crawler_job c
+		where c.crawler_flag = '0'
+	</select>
+
+	<select id="selectByJobType" parameterType="com.elecom.crawler.entity.CrawlerJob"
+		resultType="com.elecom.crawler.entity.CrawlerJob">
+		select c.crawler_job_id,
+		c.crawler_job_type
+		,c.crawler_search_url
+		from
+		crawler_job c
+		where c.crawler_flag = '0'
+		and crawler_job_type =
+		#{crawler_job_type,jdbcType=VARCHAR}
+		order by crawler_job_id
+	</select>
+
+
+	<insert id="insertCrawlerJob" parameterType="com.elecom.crawler.entity.CrawlerJob">
+		insert into
+		crawler_job (crawler_job_id, crawler_job_type, crawler_search_url)
+		values(#{crawler_job_id,jdbcType=INTEGER},
+		#{crawler_job_type,jdbcType=VARCHAR},
+		#{crawler_search_url,jdbcType=VARCHAR});
+	</insert>
+
+	<update id="updateByJobId" parameterType="com.elecom.crawler.entity.CrawlerJob">
+		update crawler_job
+		set crawler_flag = '1'
+		where crawler_job_id = #{crawler_job_id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+       <property name="logBase" value="../logs" />
+
+       <property name="smtpHost" value="XX" />
+       <property name="smtpPort" value="25" />
+       <property name="username" value="XX" />
+       <property name="password" value="XX" />
+       <property name="SSL" value="false" />
+       <property name="email_to" value="XX" />
+
+       <include resource="logback-base.xml"/>
+
+       <root level="INFO">
+           <appender-ref ref="INFOLOG" />
+           <appender-ref ref="WARNLOG" />
+           <appender-ref ref="ERRORLOG" />
+           <appender-ref ref="EMAILERROR" />
+           <appender-ref ref="EMAILWARN" />
+       </root>
+</included>

@@ -1,0 +1,63 @@
+<bean:beans xmlns="http://www.springframework.org/schema/batch"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+    ">
+
+
+	<!-- ############################################################################################## -->
+	<!-- yamada WebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+	<job id="yamadaJob">
+		<step id="yamadaJob.step1">
+			<tasklet>
+				<chunk reader="yamadaItemReader" writer="yamadaItemWriter"
+					commit-interval="10">
+				</chunk>
+			</tasklet>
+		</step>
+	</job>
+	<bean:bean id="yamadaUtils"
+		class="com.elecom.crawler.common.util.YamadaCrawlerUtils">
+	</bean:bean>
+	<bean:bean id="yamadaItemReader"
+		class="com.elecom.crawler.batch.reader.YamadaItemReader">
+<!-- 		<bean:property name="yUtils" ref="yamadaUtils" /> -->
+	</bean:bean>
+
+	<bean:bean id="yamadaItemWriter"
+		class="com.elecom.crawler.batch.writer.YamadaItemWriter">
+	</bean:bean>
+	<!-- ############################################################################################## -->
+	<!-- yamada WebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+
+
+	<!-- run every 10 seconds -->
+	<!-- ############################################################################################## -->
+	<!-- yamada crawler trigger 毎日のAM２時起動 -->
+	<!-- ############################################################################################## -->
+	<bean:bean id="crawlerYamadaCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<bean:property name="jobDetail" ref="crawlerYamadaJob" />
+		<bean:property name="cronExpression" value="* * 2 * * ?" />
+	</bean:bean>
+
+	<bean:bean id="crawlerYamadaJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<bean:property name="jobClass"
+			value="com.elecom.crawler.batch.job.JobLauncherDetails" />
+		<bean:property name="group" value="quartz-batch" />
+		<bean:property name="jobDataAsMap">
+			<bean:map>
+				<bean:entry key="jobName" value="yamadaJob" />
+				<bean:entry key="jobLocator" value-ref="jobRegistry" />
+				<bean:entry key="jobLauncher" value-ref="jobLauncher" />
+			</bean:map>
+		</bean:property>
+	</bean:bean>
+</bean:beans>

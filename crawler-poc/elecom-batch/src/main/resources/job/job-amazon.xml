@@ -1,0 +1,64 @@
+<bean:beans xmlns="http://www.springframework.org/schema/batch"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+    ">
+
+
+	<!-- ############################################################################################## -->
+	<!-- Amazon WebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+	<job id="amazonJob">
+		<step id="amazonJob.step1">
+			<tasklet>
+				<chunk reader="amazonItemReader" writer="amazonItemWriter"
+					commit-interval="10">
+				</chunk>
+			</tasklet>
+		</step>
+	</job>
+	<bean:bean id="amazonUtils"
+		class="com.elecom.crawler.common.util.AmazonCrawlerUtils">
+	</bean:bean>
+	<bean:bean id="amazonItemReader"
+		class="com.elecom.crawler.batch.reader.AmazonItemReader">
+<!-- 		<bean:property name="aUtils" ref="amazonUtils" /> -->
+	</bean:bean>
+
+	<bean:bean id="amazonItemWriter"
+		class="com.elecom.crawler.batch.writer.AmazonItemWriter">
+	</bean:bean>
+	<!-- ############################################################################################## -->
+	<!-- Amazon WebSiteからELECOMの商品情報（型番、名称、価格など）を読み込み、DBへ登録 -->
+	<!-- ############################################################################################## -->
+
+
+	<!-- run every 10 seconds -->
+	<!-- ############################################################################################## -->
+	<!-- Amazon crawler trigger 毎日のAM1時起動 -->
+	<!-- ############################################################################################## -->
+	<bean:bean id="crawlerAmazonCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<bean:property name="jobDetail" ref="crawlerAmazonJob" />
+		<bean:property name="cronExpression" value="* * 1 * * ?" />
+	</bean:bean>
+
+	<bean:bean id="crawlerAmazonJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<bean:property name="jobClass"
+			value="com.elecom.crawler.batch.job.JobLauncherDetails" />
+		<bean:property name="group" value="quartz-batch" />
+		<bean:property name="jobDataAsMap">
+			<bean:map>
+				<bean:entry key="jobName" value="amazonJob" />
+				<bean:entry key="jobLocator" value-ref="jobRegistry" />
+				<bean:entry key="jobLauncher" value-ref="jobLauncher" />
+			</bean:map>
+		</bean:property>
+	</bean:bean>
+
+</bean:beans>

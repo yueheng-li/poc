@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elecom.crawler.mapper.CrawlerProductJobMapper">
+
+	<select id="selectAll" resultType="com.elecom.crawler.entity.CrawlerProductJob">
+		select c.crawler_product_no
+		,c.crawler_product_flag
+		from crawler_product_job c
+		where c.crawler_product_flag = '0'
+	</select>
+
+	<select id="selectByJobKey" parameterType="com.elecom.crawler.entity.CrawlerProductJob"
+		resultType="com.elecom.crawler.entity.CrawlerProductJob">
+		select c.crawler_product_no
+		,c.crawler_product_flag
+		from
+		crawler_product_job c
+		where crawler_product_no = #{crawler_product_no,jdbcType=VARCHAR}
+	</select>
+
+
+	<insert id="insertCrawlerProductJob" parameterType="com.elecom.crawler.entity.CrawlerProductJob">
+		insert into
+		crawler_product_job (crawler_product_no, crawler_product_flag)
+		values
+		(#{crawler_product_no, jdbcType=VARCHAR},
+		'0');
+	</insert>
+
+	<update id="updateByKey" parameterType="com.elecom.crawler.entity.CrawlerProductJob">
+		update crawler_product_job
+		set crawler_product_flag = '1'
+		where crawler_product_no = #{crawler_product_no,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateByKeyToEnable" parameterType="com.elecom.crawler.entity.CrawlerProductJob">
+		update crawler_product_job
+		set crawler_product_flag = '0'
+		where crawler_product_no = #{crawler_product_no,jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -1,0 +1,120 @@
+<bean:beans xmlns="http://www.springframework.org/schema/batch"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+    ">
+	<!-- ############################################################################################## -->
+	<!-- Serach用のURLをDBへ導入 -->
+	<!-- ############################################################################################## -->
+	<job id="serachUrlImportJob">
+		<step id="serachUrlImportJob.step0">
+			<tasklet ref="checkFileExistTasklet">
+			</tasklet>
+			<end on="FAILED" />
+			<next on="*" to="serachUrlImportJob.step1" />
+		</step>
+		<step id="serachUrlImportJob.step1" next="serachUrlImportJob.step2">
+			<tasklet>
+				<chunk reader="cvsFileItemReader" writer="crawlerJobItemWriter"
+					commit-interval="10">
+				</chunk>
+			</tasklet>
+		</step>
+		<step id="serachUrlImportJob.step2">
+			<tasklet ref="backupFileTasklet" />
+		</step>
+	</job>
+
+	<bean:bean id="crawlerJob" class="com.elecom.crawler.entity.CrawlerJob"
+		scope="prototype" />
+
+	<bean:bean id="cvsFileItemReader"
+		class="org.springframework.batch.item.file.FlatFileItemReader">
+		<bean:property name="resource" value="classpath:file/crawler_job.csv" />
+		<bean:property name="lineMapper">
+			<bean:bean
+				class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<bean:property name="lineTokenizer">
+					<bean:bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<bean:property name="names"
+							value="crawler_job_id, crawler_job_type, crawler_search_url" />
+					</bean:bean>
+				</bean:property>
+				<bean:property name="fieldSetMapper">
+					<bean:bean
+						class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+						<bean:property name="prototypeBeanName" value="crawlerJob" />
+					</bean:bean>
+				</bean:property>
+			</bean:bean>
+		</bean:property>
+	</bean:bean>
+	<!-- <bean:bean id="crawlerJobItemWriter" -->
+	<!-- class="org.mybatis.spring.batch.MyBatisBatchItemWriter"> -->
+	<!-- <bean:property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
+	<!-- <bean:property name="statementId" -->
+	<!-- value="com.elecom.crawler.mapper.CrawlerJobMapper.insertCrawlerJob" 
+		/> -->
+	<!-- </bean:bean> -->
+	<bean:bean id="crawlerJobItemWriter"
+		class="com.elecom.crawler.batch.writer.CrawlerJobItemWriter">
+	</bean:bean>
+
+	<bean:bean id="checkFileExistTasklet"
+		class="com.elecom.crawler.batch.tasklet.CheckFileExistTasklet">
+		<bean:property name="directoryResource">
+			<bean:bean id="directory"
+				class="org.springframework.core.io.FileSystemResource">
+				<bean:constructor-arg value="target/classes/file" />
+			</bean:bean>
+		</bean:property>
+		<bean:property name="FileNameList">
+			<bean:list>
+				<bean:value>crawler_job.csv</bean:value>
+			</bean:list>
+		</bean:property>
+	</bean:bean>
+
+	<bean:bean id="backupFileTasklet"
+		class="com.elecom.crawler.batch.tasklet.BackupFileTasklet">
+		<bean:property name="directoryResource">
+			<bean:bean id="directory"
+				class="org.springframework.core.io.FileSystemResource">
+				<bean:constructor-arg value="target/classes/file" />
+			</bean:bean>
+		</bean:property>
+	</bean:bean>
+
+	<!-- ############################################################################################## -->
+	<!-- Serach用のURLをDBへ導入 -->
+	<!-- ############################################################################################## -->
+
+	<!-- run every 10 seconds -->
+	<!-- ############################################################################################## -->
+    <!-- CSVファイルからSearch　URLをCrawler　JOBテーブルへ導入　毎月一日起動 -->
+	<!-- ############################################################################################## -->
+	<bean:bean id="serachUrlImportCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<bean:property name="jobDetail" ref="serachUrlImportJobDetail" />
+		<bean:property name="cronExpression" value="* * * 1 * ?" />
+	</bean:bean>
+
+	<bean:bean id="serachUrlImportJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<bean:property name="jobClass"
+			value="com.elecom.crawler.batch.job.JobLauncherDetails" />
+		<bean:property name="group" value="quartz-batch" />
+		<bean:property name="jobDataAsMap">
+			<bean:map>
+				<bean:entry key="jobName" value="serachUrlImportJob" />
+				<bean:entry key="jobLocator" value-ref="jobRegistry" />
+				<bean:entry key="jobLauncher" value-ref="jobLauncher" />
+			</bean:map>
+		</bean:property>
+	</bean:bean>
+</bean:beans>

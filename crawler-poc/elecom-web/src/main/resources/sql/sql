@@ -1,0 +1,50 @@
+-- local mysql start
+-- mysqld --defaults-file=C:\lichunhui\mysql-5.6.36-winx64\my.ini --console
+-- create database crawler;
+-- use crawler;
+Drop table `crawler`.`product`;
+CREATE TABLE `product` (
+	`product_no` VARCHAR(50) NOT NULL COLLATE 'utf8_unicode_ci',
+	`shop_id` VARCHAR(1) NOT NULL COLLATE 'utf8_unicode_ci',
+	`product_name` VARCHAR(250) NOT NULL COLLATE 'utf8_unicode_ci',
+	`product_price` VARCHAR(45) NOT NULL COLLATE 'utf8_unicode_ci',
+	`product_point` VARCHAR(255) NOT NULL COLLATE 'utf8_unicode_ci',
+	`product_image_url` VARCHAR(500) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+	`product_link_url` VARCHAR(500) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+	`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`create_by` VARCHAR(10) NOT NULL DEFAULT '-1' COLLATE 'utf8_unicode_ci',
+	`update_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	`update_by` VARCHAR(10) NOT NULL DEFAULT '-1' COLLATE 'utf8_unicode_ci',
+	PRIMARY KEY (`product_no`, `shop_id`)
+)
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB
+;
+
+insert `product`(`product_no`,`product_name`,`shop_id`,`product_price`,`product_point`) values('EHP-CH1010AGD','EHP-CH1010AGD [ステレオヘッドホン カナル CH1010 ゴールド]','1','2345','234');
+insert `product`(`product_no`,`product_name`,`shop_id`,`product_price`,`product_point`) values('EHP-CH1010AGD','EHP-CH1010AGD [ステレオヘッドホン カナル CH1010 ゴールド]','2','3456','345');
+insert `product`(`product_no`,`product_name`,`shop_id`,`product_price`,`product_point`) values('EHP-CH1010AGD','EHP-CH1010AGD [ステレオヘッドホン カナル CH1010 ゴールド]','3','5000','500');
+insert `product`(`product_no`,`product_name`,`shop_id`,`product_price`,`product_point`) values('EHP-CH1010AGD','EHP-CH1010AGD [ステレオヘッドホン カナル CH1010 ゴールド]','4','5500','55');
+
+
+Drop table `crawler`.`shops`;
+CREATE TABLE `crawler`.`shops` (
+  `shop_id` VARCHAR(1) NOT NULL,
+  `shop_name` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`shop_id`));
+
+
+insert into `crawler`.`shops` values ('1', 'ヤマダ')
+;
+insert into `crawler`.`shops` values ('2', '楽天')
+;
+insert into `crawler`.`shops` values ('3', 'Amazon')
+;
+insert into `crawler`.`shops` values ('4', 'ヨドバシ')
+;
+
+select p.product_no,p.product_name,p.product_price, ss.shop_name from (
+select pt.product_no, pt.product_name, min(pp.product_price) product_price from `product_price` pp, `product` pt
+where pt.product_no = pp.product_no
+group by pt.product_no, pt.product_name) p, `product_price` pp1 left join shops ss on pp1.shop_id = ss.shop_id
+where p.product_price = pp1.product_price

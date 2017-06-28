@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elecom.crawler.mapper.ProductBaseInfoMapper">
+
+  <select id="selectAll" resultType="com.elecom.crawler.entity.ProductBaseInfo">
+	select pt.product_no
+               , pt.product_name
+               , pt.product_price
+               , s.shop_name 
+          from product pt, shops s
+          where pt.shop_id = s.shop_id
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.elecom.crawler.entity.ProductBaseInfo">
+         select pt.product_no
+               , pt.product_name
+               , min(pt.product_price) product_price 
+          from product pt
+	      where pt.product_no = #{product_no}
+	      group by pt.product_no, pt.product_name
+  </select>
+  
+  
+  <select id="selectProductPricesByPno" parameterType="java.lang.String" resultType="com.elecom.crawler.entity.ProductBaseInfo">
+      select pp.product_no
+           , ss.shop_name
+           , ss.shop_id
+           , pp.product_price product_price
+           , pp.product_image_url product_image_url
+           , pp.product_link_url product_link_url
+      from product pp
+           left join shops ss on pp.shop_id = ss.shop_id
+	  where pp.product_no = #{product_no}
+  </select>
+  
+</mapper>

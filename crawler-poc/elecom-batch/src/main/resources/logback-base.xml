@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<included>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+	<property name="email_subject_error" value="[INV]error" />
+	<property name="email_subject_warn" value="[INV]warn" />
+
+    <!-- all log output -->
+    <appender name="INFOLOG"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logBase}/info.log</File>
+        <Prudent>false</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logBase}/info-%d{yyyy-MM-dd_HH}.log.gz
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
+                %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- only warn log output -->
+    <appender name="WARNLOG"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logBase}/warn.log</File>
+        <Prudent>false</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logBase}/warn-%d{yyyy-MM-dd_HH}.log.gz
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
+                %msg%n</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- only error log output -->
+	<appender name="ERRORLOG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${logBase}/error.log</File>
+		<Prudent>false</Prudent>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${logBase}/error-%d{yyyy-MM-dd_HH}.log.gz
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date %-5level %logger{35} - %message%n</Pattern>
+		</layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+	</appender>
+
+	<appender name="EMAILERROR" class="ch.qos.logback.classic.net.SMTPAppender">
+		<smtpHost>${smtpHost}</smtpHost>
+		<smtpPort>${smtpPort}</smtpPort>
+		<Username>${username}</Username>
+		<Password>${password}</Password>
+		<SSL>${SSL}</SSL>
+		<to>${email_to}</to>
+		<from>${username}</from>
+		<subject>${email_subject_error}</subject>
+		<asynchronousSending>false</asynchronousSending>
+		<layout class="ch.qos.logback.classic.html.HTMLLayout" >
+            <pattern>%date%level%thread%logger{0}%line%message</pattern>
+        </layout>
+		<cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+          <bufferSize>1</bufferSize>
+        </cyclicBufferTracker>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+		    <onMatch>ACCEPT</onMatch>
+		    <onMismatch>DENY</onMismatch>
+        </filter>
+	</appender>
+
+    <appender name="EMAILWARN" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>${smtpHost}</smtpHost>
+        <smtpPort>${smtpPort}</smtpPort>
+        <Username>${username}</Username>
+        <Password>${password}</Password>
+        <SSL>${SSL}</SSL>
+        <to>${email_to}</to>
+        <from>${username}</from>
+        <subject>${email_subject_warn}</subject>
+        <asynchronousSending>false</asynchronousSending>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date %X{ip} %-5level %logger{35} - %message%n</pattern>
+        </layout>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+	      <bufferSize>1</bufferSize>
+	    </cyclicBufferTracker>
+	    <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+	      <marker>Send_Mail</marker>
+	    </evaluator>
+	    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+<!-- 
+    <appender name="EMAILERROR" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>${smtpHost}</smtpHost>
+        <smtpPort>${smtpPort}</smtpPort>
+        <Username>${username}</Username>
+        <Password>${password}</Password>
+        <SSL>${SSL}</SSL>
+        <to>${email_to}</to>
+        <from>${username}</from>
+        <subject>${email_subject_error}</subject>
+        <asynchronousSending>false</asynchronousSending>
+        <layout class="ch.qos.logback.classic.html.HTMLLayout" >
+            <pattern>%date%level%thread%logger{0}%line%message</pattern>
+        </layout>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+          <bufferSize>1</bufferSize>
+        </cyclicBufferTracker>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.JaninoEventEvaluator">
+                <expression>  
+                    if(level == ERROR &amp;&amp; null != throwable) {
+                        return true;
+                    }
+                    return false;
+                </expression>
+            </evaluator>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter> 
+    </appender>
+ -->
+ 
+</included>
