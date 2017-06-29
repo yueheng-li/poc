@@ -20,15 +20,15 @@
 			<div class="row">
 				<div class="col-lg-12">
 				    <div >
-				      <span th:if="${messageInfo != null}" style="color: blue;" th:text="${messageInfo}"></span>
-				      <span th:if="${messageImage != null}" style="color: red;" th:text="${messageImage}"></span>
+				      <span style="color: blue;" th:text="${messageInfo}" id="messageI"></span>
+				      <span style="color: red;" th:text="${messageImage}" id="messageE"></span>
 				    </div>
 					<div class="panel panel-default">
-						<form action="upload" th:action="@{/uploadImage}" method="post"
+						<form action="upload" th:action="@{/uploadImageMulti}" method="post"
 							enctype="multipart/form-data">
-							<input type="file" name="myFile" />
+							<input type="file" name="myFile"  multiple="multiple" id="multipleFiles"/>
 							<br/>
-							<input type="submit" value="Image Upload"/>
+							<input type="submit" value="Image Upload" id="uploadmulti"/>
 						</form>
 					</div>
 					<!-- /.panel -->
@@ -40,7 +40,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
-						<div class="panel-heading">DataTables Advanced Tables
+						<div class="panel-heading">Receipt Info List.
 						<span style="margin-left: 80%;"><input type="button" value="Excel Export" onclick="download()"/></span>
 						</div>
 						<!-- /.panel-heading -->
@@ -58,7 +58,6 @@
 										<th>location</th>
 									</tr>
 								</thead>
-
 								<tbody>
 								</tbody>
 							</table>

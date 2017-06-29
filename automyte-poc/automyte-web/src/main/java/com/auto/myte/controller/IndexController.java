@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.auto.myte.beans.Message;
 import com.auto.myte.common.message.SpringMessageResourceMessages;
 import com.auto.myte.config.PropertiesConfig;
 import com.auto.myte.entity.ReceiptInfo;
@@ -120,6 +121,36 @@ public class IndexController {
 		return "list";
 	}
 
+	@RequestMapping(value = "/uploadImageMulti", method = RequestMethod.POST)
+	public String uploadImageMulti(HttpServletRequest request, @RequestParam("myFile") MultipartFile[] file,
+			Model model) throws Exception {
+
+		StringBuilder sbInfo = new StringBuilder();
+		StringBuilder sbError = new StringBuilder();
+		for (MultipartFile multipartFile : file) {
+			Message message = this.uploadFIle(multipartFile);
+
+			if (message != null) {
+
+				if (StringUtils.isNotBlank(message.getError())) {
+					model.addAttribute("messageImage", message.getError());
+					sbError.append(message.getError());
+					// sbError.append("&lt;br/&gt;");
+				}
+				if (StringUtils.isNotBlank(message.getInfo())) {
+					model.addAttribute("messageInfo", message.getInfo());
+					;
+					sbInfo.append(message.getInfo());
+					// sbInfo.append("&lt;br/&gt;");
+				}
+			}
+		}
+		model.addAttribute("messageImage", sbError.toString());
+		model.addAttribute("messageInfo", sbInfo.toString());
+		;
+		return "list";
+	}
+
 	/**
 	 * @param form
 	 * @param result
@@ -128,7 +159,21 @@ public class IndexController {
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	public String uploadImage(HttpServletRequest request, @RequestParam("myFile") MultipartFile file, Model model)
 			throws Exception {
+		Message message = this.uploadFIle(file);
+		if (StringUtils.isNotBlank(message.getError())) {
+			model.addAttribute("messageImage", message.getError());
+		}
+		if (StringUtils.isNotBlank(message.getInfo())) {
+			model.addAttribute("messageInfo", message.getInfo());
+			;
+		}
+		return "list";
+	}
+
+	private Message uploadFIle(MultipartFile file) throws IOException {
+		Message message = null;
 		if (!file.isEmpty()) {
+			message = new Message();
 			String fileName = file.getOriginalFilename();
 			if (CommonUtils.isImage(fileName)) {
 				// Now do something with file...
@@ -140,7 +185,7 @@ public class IndexController {
 				// call ocr api
 				ReceiptInfo receipt = new ReceiptInfo();
 				StringBuilder status = new StringBuilder();
-				
+
 				String taxi = ParseJsonUtils.pareseText(textList, CommonUtils.TAXI_REGEX);
 				if (StringUtils.isNotBlank(taxi)) {
 					// category
@@ -195,28 +240,28 @@ public class IndexController {
 				receipt.setImage_url(propertiesConfig.getImageUrl() + fileName);
 				int insertFlag = service.insertReceiptInfo(receipt);
 				if (insertFlag > 0) {
-					model.addAttribute("messageImage", "upload is ok.");
+					message.setInfo(fileName + " upload is ok.");// model.addAttribute("messageImage",
+																	// "upload
+																	// is ok.");
 				} else {
-					model.addAttribute("messageImage", "upload is ng.");
+					message.setError(fileName + " upload is ng.");
 
 				}
 			} else {
-				model.addAttribute("messageImage", "please upload image file.");
+				message.setError("please upload image file." + fileName + " is not image type");
 			}
 		}
-		return "list";
+		return message;
 	}
 
 	/**
 	 * Handle request to download an Excel document
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public void download(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public void download(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		try {
 			File file = ResourceUtils.getFile("classpath:template.xlsx");
 			XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(file));
@@ -225,7 +270,7 @@ public class IndexController {
 			int i = 1;
 			int row = 2;
 			for (ReceiptInfo receiptInfo : receiptInfoList) {
-				// No. 
+				// No.
 				sheet.getRow(row).getCell(1).setCellValue(i);
 				// Receipt type
 				sheet.getRow(row).getCell(2).setCellValue(receiptInfo.getCategory_name());
