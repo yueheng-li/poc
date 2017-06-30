@@ -2,6 +2,7 @@ package com.auto.myte.service;
 
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,15 @@ public class ReceiptInfoService {
 		return receiptInfoMapper.selectAll();
 	}
 
+	public List<ReceiptInfo> getAllReceiptByEid(String eid, int start, int length) {
+		
+		
+		return receiptInfoMapper.selectAllByEid(eid, new RowBounds(start, length));
+	}
+
 	public List<ReceiptInfo> getAllReceiptByEid(String eid) {
+		
+		
 		return receiptInfoMapper.selectAllByEid(eid);
 	}
 	

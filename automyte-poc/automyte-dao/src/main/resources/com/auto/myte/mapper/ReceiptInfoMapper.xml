@@ -67,6 +67,8 @@
 		set category_id = #{category_id,jdbcType=VARCHAR},
 		amount =
 		#{amount,jdbcType=VARCHAR},
+		status =
+		#{status,jdbcType=VARCHAR},
 		date = #{date,jdbcType=VARCHAR},
 		name =
 		#{name,jdbcType=VARCHAR}

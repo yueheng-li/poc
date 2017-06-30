@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auto.myte.beans.DataTablesViewBean;
 import com.auto.myte.entity.ReceiptInfo;
 import com.auto.myte.service.ReceiptInfoService;
-import com.fasterxml.jackson.annotation.JsonFormat.Value;
+import com.auto.myte.utils.DataTableUtils;
 
 @RestController
 public class RestFulController {
@@ -26,15 +29,22 @@ public class RestFulController {
 	private ReceiptInfoService service;
 
 	@RequestMapping("/tables")
-	public Map<String, List> hello() {
-		
+	public DataTablesViewBean<ReceiptInfo> list(HttpServletRequest request) {
+		DataTableUtils du = new DataTableUtils(request, null, null);
+//		String start = request.getParameter("start");  
+//		String length = request.getParameter("length");  
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
 			    .getAuthentication()
 			    .getPrincipal();
+//		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByEid(userDetails.getUsername(), Integer.parseInt(start), Integer.parseInt(length));
 		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByEid(userDetails.getUsername());
 		Map<String, List> map = new HashMap<>();
 		map.put("data", receiptInfoList);
-		return map;
+		DataTablesViewBean<ReceiptInfo> dvb = new DataTablesViewBean<ReceiptInfo>();
+		dvb.setData(receiptInfoList);
+		dvb.setRecordsFiltered(21);
+		dvb.setRecordsTotal(21);
+		return dvb;
 	}
 
 	@RequestMapping("/details")
@@ -47,6 +57,7 @@ public class RestFulController {
 	public Map<String, String> update(@RequestBody ReceiptInfo form) {
 		Map<String, String> map = new HashMap<>();
 		try {
+			form.setStatus("正常処理された。");
 			int flg = service.updateReceiptInfoByKey(form);
 			if (flg > 0) {
 				map.put("status", "0");

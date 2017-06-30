@@ -35,22 +35,9 @@ $(document).ready(function() {
 	});
 	
 
-	$("#deleteReceipt").on("click",function(){
-		var rid = $("#rid").val(); 
-		var urlD = $("#ctx").val() + "/delete?id=" + rid;
+	$("#cancelReceipt").on("click",function(){
 		var urlList = $("#ctx").val() + "/list";
-		initMessageArea();
-		$.ajax({
-			type : "GET",
-			url : urlD,
-			dataType : "json",
-			success : function (data) {
-				window.location.href = urlList;
-			},
-			error : function (XMLHttpRequest, textStatus, errorThrown) {
-				console.log(errorThrown);
-			}
-		});
+		window.location.href = urlList;
 	});
 	
 	initMessageArea();

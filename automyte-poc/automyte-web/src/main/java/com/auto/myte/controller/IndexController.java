@@ -121,6 +121,16 @@ public class IndexController {
 		return "list";
 	}
 
+	/**
+	 * @param form
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping(value = "/uploadImageMulti", method = RequestMethod.GET)
+	public String uploadImageMultiGet() throws Exception {
+		return "list";
+	}
+
 	@RequestMapping(value = "/uploadImageMulti", method = RequestMethod.POST)
 	public String uploadImageMulti(HttpServletRequest request, @RequestParam("myFile") MultipartFile[] file,
 			Model model) throws Exception {

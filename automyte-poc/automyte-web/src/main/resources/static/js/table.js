@@ -3,9 +3,21 @@ $(document).ready(function() {
 	var url = $("#ctx").val() + "/tables";
 	$('#example').DataTable({
 		"ajax" : url,
+		"pagingType": "simple_numbers",//设置分页控件的模式 
+		"iDisplayLength" : 10,// 每页显示行数
+		"bLengthChange": false,//屏蔽tables的一页展示多少条记录的下拉列表
+//		"bFilter" : true,// 搜索栏
+		"processing": true, //打开数据加载时的等待效果
+		"bStateSave":true,
+//		"serverSide": true,
+//		"ajax": {
+//            "url": url,
+//            "type":"POST"
+//        },
 		"columns" : [ {
 			"data" : "id"
-		}, {
+		},
+		{
 			"data" : "category_name"
 		}, {
 			"data" : "date"
@@ -17,24 +29,31 @@ $(document).ready(function() {
 			"data" : "status"
 		}, {
 			"data" : "location"
-		} ],
+		} , {
+			"sClass": "text-center",
+			"data": "id",
+			"render": function (data, type, full, meta) {
+                return '<input type="button"  value="delete" class="btn btn-primary"   onclick="deleteR(' + data + ')" />';
+            },
+            "bSortable": false,
+			"searchable" : false
+		}, 
+		{ 
+			"sClass": "text-center",
+			"data": "id",
+			"render": function (data, type, full, meta) {
+                return '<input type="button"  value="modify" class="btn btn-primary"   onclick="updateR(' + data + ')" />';
+            },
+            "bSortable": false,
+			"searchable" : false
+		},
+		
+		],
 		"columnDefs" : [ {
 			"targets" : [ 0 ],
 			"visible" : false,
 			"searchable" : false
 		} ]
-	});
-
-	var compareUrl = $("#ctx").val() + "/detail?id=";
-	$('#example tbody').on('click', 'tr', function() {
-		var table = $('#example').DataTable();
-		if (table) {
-			var data = table.row(this._DT_RowIndex).data();
-			if (data) {
-				window.location.href = compareUrl + data.id;
-			}
-		}
-
 	});
 
 	$('#uploadmulti').on('click', function() {
@@ -80,45 +99,26 @@ function checkImgType(fileName) {
 	return false;
 }
 
+function deleteR(id) {
+	var urlD = $("#ctx").val() + "/delete?id=" + id;
+	var urlList = $("#ctx").val() + "/list";
+	$.ajax({
+		type : "GET",
+		url : urlD,
+		dataType : "json",
+		success : function (data) {
+			window.location.href = urlList;
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log(errorThrown);
+		}
+	});
+}
 
+function updateR(id) {
+if (id) {
+	var compareUrl = $("#ctx").val() + "/detail?id=";
+	window.location.href = compareUrl + id;
+}
+}
 
-// else {
-// var img = new Image();
-// img.src = filepath;
-// while (true) {
-// if (img.fileSize > 0) {
-// if (img.fileSize > 10 * 1024) {
-// alert("图片不大于10M。");
-// return false;
-// }
-// break;
-// }
-//
-// }
-// }
-
-// /*
-// * 判断图片大小
-// *
-// * @param ths type="file"的javascript对象 @param width 需要符合的宽 @param height
-// 需要符合的高
-// * @return true-符合要求,false-不符合
-// */
-// function checkImgPX(ths, width, height) {
-// var img = null;
-// img = document.createElement("img");
-// document.body.insertAdjacentElement("beforeEnd", img); // firefox不行
-// img.style.visibility = "hidden";
-// img.src = ths.value;
-// var imgwidth = img.offsetWidth;
-// var imgheight = img.offsetHeight;
-//
-// alert(imgwidth + "," + imgheight);
-//
-// if (imgwidth != width || imgheight != height) {
-// alert("图的尺寸应该是" + width + "x" + height);
-// ths.value = "";
-// return false;
-// }
-// return true;
-// }

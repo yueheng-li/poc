@@ -15,6 +15,9 @@ public class ParseJsonUtils {
 	public static List<String> parseJson(JSONObject entity) {
 		List<String> textList = new ArrayList<String>();
         JSONArray array = entity.getJSONArray("regions");
+        if (array == null) {
+        	return textList;
+        }
         for (Object object : array) {
         	Map jsonLines = (Map) object;
         	JSONArray lines = (JSONArray) jsonLines.get("lines");
