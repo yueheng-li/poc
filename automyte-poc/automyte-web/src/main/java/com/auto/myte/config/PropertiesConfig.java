@@ -13,6 +13,8 @@ public class PropertiesConfig {
 
 	private String imageUrl;
 
+	private String runScript;
+
 	public String getFilepath() {
 		return filepath;
 	}
@@ -27,6 +29,14 @@ public class PropertiesConfig {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public String getRunScript() {
+		return runScript;
+	}
+
+	public void setRunScript(String runScript) {
+		this.runScript = runScript;
 	}
 
 }

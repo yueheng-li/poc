@@ -76,14 +76,33 @@ $(document).ready(function() {
 			console.log("抱歉，你的浏览器不支持FileAPI，请升级浏览器！");
 		}
 		return uploadFlg;
-
 	});
+	
+	
 });
 
 function download() {
 	var pno = $("#pno").val();
 	var url = $("#ctx").val() + "/download?pno=" + pno;
 	window.open(url);
+}
+
+function runScript() {
+	$("body").mLoading("show");//显示loading组件
+	var urlD = $("#ctx").val() + "/run";
+	$.ajax({
+		type : "GET",
+		url : urlD,
+		success : function (data) {
+
+			$("body").mLoading("hide");//隐藏loading组件
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+
+			$("body").mLoading("hide");//隐藏loading组件
+			console.log(errorThrown);
+		}
+	});
 }
 
 /*

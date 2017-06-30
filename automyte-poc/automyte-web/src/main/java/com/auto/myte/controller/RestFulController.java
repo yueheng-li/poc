@@ -81,4 +81,17 @@ public class RestFulController {
 		map.put("flg", Integer.valueOf(flg));
 		return map;
 	}
+
+	@RequestMapping("/run")
+	public void run() {
+        Runtime rt = Runtime.getRuntime();
+        Process p = null;
+        String fileLac = "";
+        try {
+            fileLac = "java -jar C:\\PMI\\apache-jmeter-3.2\\bin\\ApacheJMeter.jar";//要调用的程序路径
+            p = rt.exec(fileLac);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+	}
 }

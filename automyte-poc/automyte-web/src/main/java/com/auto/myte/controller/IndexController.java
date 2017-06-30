@@ -68,7 +68,7 @@ public class IndexController {
 		logger.info(userDetails.getUsername());
 		return "list";
 	}
-
+	
 	/**
 	 * @param form
 	 * @param result
