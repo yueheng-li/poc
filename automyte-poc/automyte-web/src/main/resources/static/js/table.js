@@ -1,5 +1,10 @@
 $(document).ready(function() {
 
+	$("body").mLoading({
+	    text:"downloading",//加载文字，默认值：加载中...
+	});
+	$("body").mLoading("hide");//隐藏loading组件
+	
 	var url = $("#ctx").val() + "/tables";
 	$('#example').DataTable({
 		"ajax" : url,
@@ -26,7 +31,8 @@ $(document).ready(function() {
 		}, {
 			"data" : "image_name"
 		}, {
-			"data" : "status"
+				"sClass": "text-center",
+				"data": "status"
 		}, {
 			"data" : "location"
 		} , {
@@ -82,9 +88,28 @@ $(document).ready(function() {
 });
 
 function download() {
-	var pno = $("#pno").val();
-	var url = $("#ctx").val() + "/download?pno=" + pno;
-	window.open(url);
+	var url = $("#ctx").val() + "/downloadr";
+//	window.open(url);
+	$("body").mLoading({
+	    text:"downloading",//加载文字，默认值：加载中...
+	}).show();
+//	$("body").mLoading("show");//显示loading组件
+	$.ajax({
+		type : "GET",
+		url : url,
+		success : function (data) {
+
+			if (data && data.messageInfo) {
+				$("#messageI").text(data.messageInfo); 
+			}
+			$("body").mLoading("hide");//隐藏loading组件
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {
+
+			$("body").mLoading("hide");//隐藏loading组件
+			console.log(errorThrown);
+		}
+	});
 }
 
 function runScript() {

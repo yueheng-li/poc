@@ -175,7 +175,6 @@ public class IndexController {
 		}
 		if (StringUtils.isNotBlank(message.getInfo())) {
 			model.addAttribute("messageInfo", message.getInfo());
-			;
 		}
 		return "list";
 	}
@@ -224,7 +223,6 @@ public class IndexController {
 						receipt.setAmount(CommonUtils.getAmount(price));
 					} else {
 						status.append("金額認識処理異常。\\n");
-
 						receipt.setAmount("0");
 					}
 				}
@@ -263,7 +261,6 @@ public class IndexController {
 		}
 		return message;
 	}
-
 	/**
 	 * Handle request to download an Excel document
 	 */

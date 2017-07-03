@@ -1,9 +1,3 @@
-/* Author：mingyuhisoft@163.com
- * Github:https://github.com/imingyu/jquery.mloading
- * Npm:npm install jquery.mloading.js
- * Date：2016-7-4
- */
-
 ;(function (root, factory) {
     'use strict';
 
