@@ -63,7 +63,8 @@ public class IndexController {
 	 */
 	@RequestMapping(value = "/")
 	public String home(Model model) throws Exception {
-
+		
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		logger.info(userDetails.getUsername());
 		return "list";
@@ -86,6 +87,7 @@ public class IndexController {
 	 */
 	@RequestMapping(value = "/list")
 	public String list(HttpServletRequest request, Model model) throws Exception {
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		return "list";
 	}
 
@@ -107,7 +109,8 @@ public class IndexController {
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadfile")
-	public String uploadFile() throws Exception {
+	public String uploadFile(Model model) throws Exception {
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		return "list";
 	}
 
@@ -117,7 +120,8 @@ public class IndexController {
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.GET)
-	public String uploadImageGet() throws Exception {
+	public String uploadImageGet(Model model) throws Exception {
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		return "list";
 	}
 
@@ -127,13 +131,15 @@ public class IndexController {
 	 * @return
 	 */
 	@RequestMapping(value = "/uploadImageMulti", method = RequestMethod.GET)
-	public String uploadImageMultiGet() throws Exception {
+	public String uploadImageMultiGet(Model model) throws Exception {
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		return "list";
 	}
 
 	@RequestMapping(value = "/uploadImageMulti", method = RequestMethod.POST)
-	public String uploadImageMulti(HttpServletRequest request, @RequestParam("myFile") MultipartFile[] file,
+	public String uploadImageMulti(HttpServletRequest request, @RequestParam("myFile") MultipartFile[] file,@RequestParam("submitDate") String submitDate,
 			Model model) throws Exception {
+		model.addAttribute("submitDate", submitDate);
 
 		StringBuilder sbInfo = new StringBuilder();
 		StringBuilder sbError = new StringBuilder();
@@ -169,6 +175,7 @@ public class IndexController {
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	public String uploadImage(HttpServletRequest request, @RequestParam("myFile") MultipartFile file, Model model)
 			throws Exception {
+		model.addAttribute("submitDate", DateUtils.getMyteEndDateTime());
 		Message message = this.uploadFIle(file);
 		if (StringUtils.isNotBlank(message.getError())) {
 			model.addAttribute("messageImage", message.getError());
@@ -246,6 +253,7 @@ public class IndexController {
 				}
 				receipt.setStatus(status.toString());
 				receipt.setImage_url(propertiesConfig.getImageUrl() + fileName);
+				receipt.setSubmit_date(DateUtils.getMyteEndDateTime());
 				int insertFlag = service.insertReceiptInfo(receipt);
 				if (insertFlag > 0) {
 					message.setInfo(fileName + " upload is ok.");// model.addAttribute("messageImage",

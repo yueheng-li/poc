@@ -51,4 +51,13 @@ public class FileUtils {
 		
 		int i = FileCopyUtils.copy(is, os);
 	}
+	
+	public static void main(String[] args) {
+		try {
+			download("http://localhost:8080/images/myte.zip", "C:\\test\\myte.zip");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

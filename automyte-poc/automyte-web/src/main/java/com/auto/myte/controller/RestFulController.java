@@ -7,9 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -19,11 +17,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.ResourceUtils;
@@ -37,11 +38,13 @@ import com.auto.myte.beans.DataTablesViewBean;
 import com.auto.myte.config.PropertiesConfig;
 import com.auto.myte.entity.ReceiptInfo;
 import com.auto.myte.service.ReceiptInfoService;
-import com.auto.myte.utils.DataTableUtils;
+import com.auto.myte.utils.DateUtils;
 import com.auto.myte.utils.FileUtils;
+import com.auto.myte.utils.ZipUtils;
 
 import ch.qos.logback.core.util.FileUtil;
 
+@Configuration
 @RestController
 public class RestFulController {
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
@@ -51,17 +54,24 @@ public class RestFulController {
 	@Autowired
 	private ReceiptInfoService service;
 
+	/**
+	 * 一览显示
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/tables")
 	public DataTablesViewBean<ReceiptInfo> list(HttpServletRequest request) {
-		DataTableUtils du = new DataTableUtils(request, null, null);
+//		DataTableUtils du = new DataTableUtils(request, null, null);
+		// 翻页设置，注释掉
 //		String start = request.getParameter("start");  
 //		String length = request.getParameter("length");  
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
 			    .getAuthentication()
 			    .getPrincipal();
+		// 翻页设置，注释掉
 //		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByEid(userDetails.getUsername(), Integer.parseInt(start), Integer.parseInt(length));
-		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByEid(userDetails.getUsername());
-		Map<String, List> map = new HashMap<>();
+		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByKey(userDetails.getUsername(), DateUtils.getMyteEndDateTime());
+		Map<String, List> map = new HashMap<String, List>();
 		map.put("data", receiptInfoList);
 		DataTablesViewBean<ReceiptInfo> dvb = new DataTablesViewBean<ReceiptInfo>();
 		dvb.setData(receiptInfoList);
@@ -70,12 +80,42 @@ public class RestFulController {
 		return dvb;
 	}
 
+	/**
+	 * 查询显示
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/search")
+	public DataTablesViewBean<ReceiptInfo> search(@RequestParam(value = "submitDate", required = false) String submitDate) {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+			    .getAuthentication()
+			    .getPrincipal();
+		List<ReceiptInfo> receiptInfoList = service.getAllReceiptByKey(userDetails.getUsername(), submitDate);
+		Map<String, List> map = new HashMap<String, List>();
+		map.put("data", receiptInfoList);
+		DataTablesViewBean<ReceiptInfo> dvb = new DataTablesViewBean<ReceiptInfo>();
+		dvb.setData(receiptInfoList);
+		dvb.setRecordsFiltered(21);
+		dvb.setRecordsTotal(21);
+		return dvb;
+	}
+
+	/**
+	 * 详细表示
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/details")
 	public ReceiptInfo details(@RequestParam(value = "id", required = false) String id) {
 		ReceiptInfo receiptInfo = service.getReceiptBaseInfo(id);
 		return receiptInfo;
 	}
 
+	/**
+	 * 更新（详细画面的update button）
+	 * @param form
+	 * @return
+	 */
 	@RequestMapping("/update")
 	public Map<String, String> update(@RequestBody ReceiptInfo form) {
 		Map<String, String> map = new HashMap<>();
@@ -97,6 +137,11 @@ public class RestFulController {
 		return map;
 	}
 
+	/**
+	 * 一览画面的删除button
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/delete")
 	public Map<String, Integer> delete(@RequestParam(value = "id", required = false) String id) {
 		Map<String, Integer> map = new HashMap<>();
@@ -105,6 +150,9 @@ public class RestFulController {
 		return map;
 	}
 
+	/**
+	 * 一览画面的runScript button，调用cmd命令执行脚本（配置在application.properties中）
+	 */
 	@RequestMapping("/run")
 	public void run() {
         Runtime rt = Runtime.getRuntime();
@@ -114,23 +162,22 @@ public class RestFulController {
         	String osName = System.getProperty("os.name" ); 
             logger.info(osName);
             fileLac = propertiesConfig.getRunScript();//要调用的程序路径
-//            p = rt.exec(new String[]{"/bin/sh","-c", fileLac});
             String [] cmd={"cmd","/C", fileLac}; 
             p = rt.exec(cmd);
             logger.info(p.toString());
-            Thread.sleep(1000);
+//            Thread.sleep(10000);
             
-//            InputStream stdin = p.getInputStream();
-//            InputStreamReader isr = new InputStreamReader(stdin);
-//            BufferedReader br = new BufferedReader(isr);
-//            String line = null;
-//            System.out.println("<output></output>");
-//            while ((line = br.readLine()) != null)
-//                System.out.println(line);
-//            System.out.println("");
-//            int exitVal = p.exitValue();
-//            System.out.println("Process exitValue: " + exitVal);
-//            System.out.println("<output></output>");
+            InputStream stdin = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(stdin);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            System.out.println("<output></output>");
+            while ((line = br.readLine()) != null)
+                System.out.println(line);
+            System.out.println("");
+            int exitVal = p.exitValue();
+            System.out.println("Process exitValue: " + exitVal);
+            System.out.println("<output></output>");
             
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -138,64 +185,75 @@ public class RestFulController {
 	}
 
 	/**
+	 * 下载
 	 * Handle request to download an Excel document
 	 */
 	@RequestMapping(value = "/downloadr", method = RequestMethod.GET)
 	public Map<String, String> download(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String result = "";
 
-		String fileName = downloadExcel(result);
-		fileName = fileName + "@" + this.downloadJar(result);
-		result = "ダウンロード成功！";
+		String fileName = "";
+		try {
+			fileName = downloadExcel(result);
+			fileName = fileName + "@" + this.downloadZip(result);
+			result = "ダウンロード成功！";
+		} catch(Exception e) {
+			result = "ダウンロード失敗！";
+		}
 		Map<String, String> map = new HashMap<>();
 		map.put("messageInfo", fileName + " " + result);
 		return map;
 	}
 
-	private String downloadExcel(String result) throws FileNotFoundException, IOException {
+	/**
+	 * 下载Excel
+	 * @param result
+	 * @return
+	 * @throws Exception
+	 */
+	private String downloadExcel(String result) throws Exception {
+		String fileName = propertiesConfig.getExcel();
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		try {
-			File file = ResourceUtils.getFile("classpath:template.xlsx");
-			XSSFWorkbook wb = new XSSFWorkbook(new FileInputStream(file));
+			File file = ResourceUtils.getFile("classpath:template.xls");
+			Workbook wb = null;
+			try {
+
+				wb = new XSSFWorkbook(new FileInputStream(file));
+			} catch(Exception ex) {
+				wb = new HSSFWorkbook(new FileInputStream(file));
+			}
 			Sheet sheet = wb.getSheetAt(0);
 			List<ReceiptInfo> receiptInfoList = service.getAllReceiptByEid(userDetails.getUsername());
 			int i = 1;
-			int row = 2;
+			int row = 4;
 			for (ReceiptInfo receiptInfo : receiptInfoList) {
-				// No.
-				sheet.getRow(row).getCell(1).setCellValue(i);
-				// Receipt type
-				sheet.getRow(row).getCell(2).setCellValue(receiptInfo.getCategory_name());
-				// Country of Expense
-				sheet.getRow(row).getCell(3).setCellValue("ja");
-				// CNY
-				sheet.getRow(row).getCell(4).setCellValue("Ja");
-				// Amount
-				sheet.getRow(row).getCell(5).setCellValue(receiptInfo.getAmount());
-				// On
-				sheet.getRow(row).getCell(6).setCellValue(receiptInfo.getDate());
-				// Reason
-				String reason = "";
-				if ("1".equals(receiptInfo.getCategory_id())) {
-					reason = "Client Site/Other<-> Other/Client Site";
-				} else if ("2".equals(receiptInfo.getCategory_id())) {
-					reason = "Oviertime Meal Allowance";
+				if (i == 1) {
+					// DATA_START
+					sheet.getRow(row).getCell(0).setCellValue("DATA_START");
 				}
-				sheet.getRow(row).getCell(7).setCellValue(reason);
+				// Amount
+				sheet.getRow(row).getCell(1).setCellValue(receiptInfo.getAmount());
+				// On(Date)
+				sheet.getRow(row).getCell(2).setCellValue(receiptInfo.getDate());
+
+	        	if (i == receiptInfoList.size()) {
+					// DATA_START
+					sheet.getRow(row).getCell(0).setCellValue("DATA_END");
+	        	}
 				i++;
 				row++;
 			}
 
 			wb.write(os);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			result = "ダウンロード失敗！";
+			logger.error(e.getMessage());
+			throw e;
 		}
 		byte[] content = os.toByteArray();
 		InputStream is = new ByteArrayInputStream(content);
-		
-		String fileName = "C:/test/"+userDetails.getUsername() + ".xlsx";
 		File file = new File(fileName);
 		FileUtil.createMissingParentDirectories(file);
         FileOutputStream fos = new FileOutputStream(file);
@@ -209,8 +267,9 @@ public class RestFulController {
 			while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
 				bos.write(buff, 0, bytesRead);
 			}
-		} catch (final IOException e) {
-			result = "ダウンロード失敗！";
+		} catch (final Exception e) {
+			logger.error(e.getMessage());
+			throw e;
 		} finally {
 			if (bis != null)
 				bis.close();
@@ -222,17 +281,27 @@ public class RestFulController {
 	
 
 
-	private String downloadJar(String result) throws FileNotFoundException, IOException {
+	/**
+	 * 下载ZIP并解压缩
+	 * @param result
+	 * @return
+	 * @throws Exception
+	 */
+	private String downloadZip(String result) throws Exception {
 
-		String fileName = "C:/test/logback.jar";
+		String fileName = propertiesConfig.getLocZip();
 		if (FileUtils.judeFileExists(new File(fileName))) {
 			return fileName;
 		}
 		try {
-			FileUtils.download("http://localhost:8080/images/automyte.jar", fileName);
+			FileUtils.download(propertiesConfig.getDownloadZip(), fileName);
+			boolean zip = ZipUtils.unZipFiles(fileName, propertiesConfig.getRunfolder());
+			if (zip) {
+
+				logger.error("unzip failure!!");
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			result = "ダウンロード失敗！";
+			throw e;
 		}
 		
 		return fileName;

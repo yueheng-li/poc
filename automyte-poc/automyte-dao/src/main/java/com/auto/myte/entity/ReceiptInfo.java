@@ -24,6 +24,8 @@ public class ReceiptInfo extends BaseEntity{
 	private String status;
 	// 価格
 	private String location;
+	// 価格
+	private String submit_date;
 
 	public String getId() {
 		return id;
@@ -111,6 +113,14 @@ public class ReceiptInfo extends BaseEntity{
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getSubmit_date() {
+		return submit_date;
+	}
+
+	public void setSubmit_date(String submit_date) {
+		this.submit_date = submit_date;
 	}
 
 }

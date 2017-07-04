@@ -13,23 +13,34 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Image Upload</h1>
+					<h1 class="page-header">Receipt Info List</h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
 			<div class="row">
 				<div class="col-lg-12">
-				    <div >
-				      <span style="color: blue;" th:text="${messageInfo}" id="messageI"></span>
-				      <span style="color: red;" th:text="${messageImage}" id="messageE"></span>
-				    </div>
 					<div class="panel panel-default">
-						<form action="upload" th:action="@{/uploadImageMulti}" method="post"
-							enctype="multipart/form-data">
-							<input type="file" name="myFile"  multiple="multiple" id="multipleFiles"/>
-							<br/>
-							<input type="submit" value="Image Upload" id="uploadmulti"/>
-						</form>
+						<div class="panel-heading">Upload Or Search
+						</div>
+					    <div >
+					      <span style="color: blue;" th:text="${messageInfo}" id="messageI"></span>
+					      <span style="color: red;" th:text="${messageImage}" id="messageE"></span>
+					    </div>
+						<div class="panel panel-default">
+							<form action="upload" th:action="@{/action}" method="post"
+								enctype="multipart/form-data">
+								<div class="form-group">
+									<label for="date">Myte Submit Date</label> 
+									<input type="text" class="form-control datepicker date"	id="submitDate" th:value="${submitDate}"/>
+								</div>
+								<div class="form-group">
+									<label for="date">Files</label> 
+									<input type="file" name="myFile"  multiple="multiple" id="multipleFiles" />
+								</div>
+								<input type="submit" name="action" value="upload" id="action"/>
+								<input type="submit" name="action" value="search List" id="action" />
+							</form>
+						</div>
 					</div>
 					<!-- /.panel -->
 				</div>
@@ -42,7 +53,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">Receipt Info List.
 						<span style="position: absolute;right: 100px;"><input type="button" value="Run Script" onclick="runScript()"/></span>
-						<span style="position: absolute;right: 200px;"><input type="button" value="Excel Export" onclick="download()"/></span>
+						<span style="position: absolute;right: 200px;"><input type="button" value="Excel and Sikuli Export" onclick="download()"/></span>
 						</div>
 						<!-- /.panel-heading -->
 						<div class="panel-body">
@@ -79,5 +90,8 @@
 	<div th:include="layout/footer :: footer"></div>
 	<script type="text/javascript" th:src="@{/js/table.js}"></script>
 	<script type="text/javascript" th:src="@{/js/jquery.mloading.js}"></script>
+	<script type="text/javascript" th:src="@{/jquery/jquery-ui.min.js}"></script>
+	<script type="text/javascript" th:src="@{/jquery/jquery-dateFormat.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/datepicker.js}"></script>
 </body>
 </html>

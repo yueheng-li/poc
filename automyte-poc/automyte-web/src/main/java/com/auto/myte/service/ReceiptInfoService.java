@@ -27,18 +27,19 @@ public class ReceiptInfoService {
 	}
 
 	public List<ReceiptInfo> getAllReceiptByEid(String eid, int start, int length) {
-		
-		
+
 		return receiptInfoMapper.selectAllByEid(eid, new RowBounds(start, length));
 	}
 
 	public List<ReceiptInfo> getAllReceiptByEid(String eid) {
-		
-		
+
 		return receiptInfoMapper.selectAllByEid(eid);
 	}
-	
-	
+
+	public List<ReceiptInfo> getAllReceiptByKey(String eid, String submitDate) {
+
+		return receiptInfoMapper.selectAllByKey(eid, submitDate);
+	}
 
 	public int insertReceiptInfo(ReceiptInfo receipt) {
 		return receiptInfoMapper.insertReceiptInfo(receipt);
@@ -48,9 +49,8 @@ public class ReceiptInfoService {
 		return receiptInfoMapper.updateReceiptInfoByKey(receipt);
 	}
 
-
 	public int deleteByPrimaryKey(String id) {
 		return receiptInfoMapper.deleteByPrimaryKey(id);
 	}
-	
+
 }

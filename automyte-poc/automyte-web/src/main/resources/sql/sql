@@ -14,6 +14,7 @@ CREATE TABLE `receipt_info` (
 	`image_url` VARCHAR(255) COLLATE 'utf8_unicode_ci',
 	`status` VARCHAR(255) COLLATE 'utf8_unicode_ci',
 	`location` VARCHAR(10) COLLATE 'utf8_unicode_ci',
+	`submit_date` VARCHAR(10) NOT NULL ,
 	`create_by` VARCHAR(10) NOT NULL DEFAULT '-1' COLLATE 'utf8_unicode_ci',
 	`create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
@@ -21,7 +22,7 @@ CREATE TABLE `receipt_info` (
 COLLATE='utf8_unicode_ci'
 ENGINE=InnoDB
 ;
-
+create index index_submit_date on receipt_info(submit_date);
 
 Drop table `category`;
 CREATE TABLE `category` (

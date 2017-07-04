@@ -15,6 +15,14 @@ public class PropertiesConfig {
 
 	private String runScript;
 
+	private String runfolder;
+
+	private String locZip;
+
+	private String downloadZip;
+
+	private String excel;
+	
 	public String getFilepath() {
 		return filepath;
 	}
@@ -37,6 +45,38 @@ public class PropertiesConfig {
 
 	public void setRunScript(String runScript) {
 		this.runScript = runScript;
+	}
+
+	public String getRunfolder() {
+		return runfolder;
+	}
+
+	public void setRunfolder(String runfolder) {
+		this.runfolder = runfolder;
+	}
+
+	public String getLocZip() {
+		return locZip;
+	}
+
+	public void setLocZip(String locZip) {
+		this.locZip = locZip;
+	}
+
+	public String getDownloadZip() {
+		return downloadZip;
+	}
+
+	public void setDownloadZip(String downloadZip) {
+		this.downloadZip = downloadZip;
+	}
+
+	public String getExcel() {
+		return excel;
+	}
+
+	public void setExcel(String excel) {
+		this.excel = excel;
 	}
 
 }

@@ -9,6 +9,7 @@ import com.auto.myte.entity.ReceiptInfo;
 
 public interface ReceiptInfoMapper {
 	List<ReceiptInfo> selectAllByEid(@Param("eid")String eid);
+	List<ReceiptInfo> selectAllByKey(@Param("eid")String eid, @Param("submit_date")String submit_date);
 	List<ReceiptInfo> selectAllByEid(@Param("eid")String eid, RowBounds rowBounds);
 	List<ReceiptInfo> selectAll();
 	ReceiptInfo selectByPrimaryKey(@Param("id")String id);
