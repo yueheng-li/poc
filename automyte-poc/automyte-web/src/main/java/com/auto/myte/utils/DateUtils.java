@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class DateUtils {
 	private static String defaultDatePattern = "yyyy/MM/dd ";
+	private static String dateTimePattern = "yyyy/MM/dd HH:mm:ss";
 
 	/**
 	 * 获得默认的 date pattern
@@ -126,19 +127,26 @@ public class DateUtils {
 		return format(middleDay);
 	}
 	
+	public static String convert2String(long time) {
+		Date d = new Date(time);
+		System.out.println(format(d));
+		return format(d, dateTimePattern);
+	}
 	public static void main(String[] args) {
-        Calendar now = Calendar.getInstance();  
-        System.out.println("年: " + now.get(Calendar.YEAR));  
-        System.out.println("月: " + (now.get(Calendar.MONTH) + 1) + "");  
-        System.out.println("日: " + now.get(Calendar.DAY_OF_MONTH));  
-        System.out.println("时: " + now.get(Calendar.HOUR_OF_DAY));  
-        System.out.println("分: " + now.get(Calendar.MINUTE));  
-        System.out.println("秒: " + now.get(Calendar.SECOND));  
-        System.out.println("当前时间毫秒数：" + now.getTimeInMillis());  
-        System.out.println(now.getTime());  
-		// TODO Auto-generated method stub
-		Date day = getMiddleDayOfMonth();
-		String a = format(day);
-		System.out.println(getMyteEndDateTime());
+//        Calendar now = Calendar.getInstance();  
+//        System.out.println("年: " + now.get(Calendar.YEAR));  
+//        System.out.println("月: " + (now.get(Calendar.MONTH) + 1) + "");  
+//        System.out.println("日: " + now.get(Calendar.DAY_OF_MONTH));  
+//        System.out.println("时: " + now.get(Calendar.HOUR_OF_DAY));  
+//        System.out.println("分: " + now.get(Calendar.MINUTE));  
+//        System.out.println("秒: " + now.get(Calendar.SECOND));  
+//        System.out.println("当前时间毫秒数：" + now.getTimeInMillis());  
+//        System.out.println(now.getTime());  
+//		// TODO Auto-generated method stub
+//		Date day = getMiddleDayOfMonth();
+//		String a = format(day);
+//		System.out.println(getMyteEndDateTime());
+		long time = new Date().getTime();
+		System.out.println(convert2String(time));
 	}
 }

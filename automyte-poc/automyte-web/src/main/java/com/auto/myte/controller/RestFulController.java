@@ -43,9 +43,12 @@ import com.auto.myte.utils.FileUtils;
 import com.auto.myte.utils.ZipUtils;
 
 import ch.qos.logback.core.util.FileUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Configuration
 @RestController
+@Api(value= "Receipt使用类", description ="App相关操作接口定义类")
 public class RestFulController {
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 	@Autowired
@@ -59,6 +62,7 @@ public class RestFulController {
 	 * @param request
 	 * @return
 	 */
+	@ApiOperation(value = "一览显示",httpMethod ="GET", notes = "list")
 	@RequestMapping("/tables")
 	public DataTablesViewBean<ReceiptInfo> list(HttpServletRequest request) {
 //		DataTableUtils du = new DataTableUtils(request, null, null);
@@ -85,6 +89,7 @@ public class RestFulController {
 	 * @param request
 	 * @return
 	 */
+	@ApiOperation(value = "查询显示",httpMethod ="GET", notes = "search")
 	@RequestMapping("/search")
 	public DataTablesViewBean<ReceiptInfo> search(@RequestParam(value = "submitDate", required = false) String submitDate) {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
@@ -105,6 +110,7 @@ public class RestFulController {
 	 * @param id
 	 * @return
 	 */
+	@ApiOperation(value = "详细表示",httpMethod ="GET", notes = "details")
 	@RequestMapping("/details")
 	public ReceiptInfo details(@RequestParam(value = "id", required = false) String id) {
 		ReceiptInfo receiptInfo = service.getReceiptBaseInfo(id);
@@ -116,6 +122,7 @@ public class RestFulController {
 	 * @param form
 	 * @return
 	 */
+	@ApiOperation(value = "详细表示",httpMethod ="POST", notes = "details")
 	@RequestMapping("/update")
 	public Map<String, String> update(@RequestBody ReceiptInfo form) {
 		Map<String, String> map = new HashMap<>();
@@ -142,6 +149,7 @@ public class RestFulController {
 	 * @param id
 	 * @return
 	 */
+	@ApiOperation(value = "一览画面的删除",httpMethod ="POST", notes = "delete")
 	@RequestMapping("/delete")
 	public Map<String, Integer> delete(@RequestParam(value = "id", required = false) String id) {
 		Map<String, Integer> map = new HashMap<>();
@@ -153,6 +161,7 @@ public class RestFulController {
 	/**
 	 * 一览画面的runScript button，调用cmd命令执行脚本（配置在application.properties中）
 	 */
+	@ApiOperation(value = "调用cmd命令执行脚本",httpMethod ="GET", notes = "run")
 	@RequestMapping("/run")
 	public void run() {
         Runtime rt = Runtime.getRuntime();
@@ -188,6 +197,7 @@ public class RestFulController {
 	 * 下载
 	 * Handle request to download an Excel document
 	 */
+	@ApiOperation(value = "下载Excel和Sikuli的Zip文件",httpMethod ="GET", notes = "downloadr")
 	@RequestMapping(value = "/downloadr", method = RequestMethod.GET)
 	public Map<String, String> download(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String result = "";
