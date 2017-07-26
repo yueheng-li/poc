@@ -29,6 +29,17 @@ spring.datasource.password=root
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 ######  db config end ###### 
 ```
+* docker方式启动
+```
+使用maven package把工程build成auto-web-1.0.0-SNAPSHOT.jar
+mkdir /usr/local/docker
+cp auto-web-1.0.0-SNAPSHOT.jar /usr/local/docker/
+cp /automyte-poc/automyte-web/docker/Dockerfile /usr/local/docker/
+cd /usr/local/docker/
+docker build -t cloud-lch:v1 /opt/docker-file/cloud/
+docker run -d -p 8080:8080 cloud-lch:v1 /opt/docker-file/cloud/
+http://ip:8080/myte/
+```
 * Linux 
   * [Linux jdk 安装](https://github.com/yueheng-li/linuxLearn/wiki/Linux-jdk-%E5%AE%89%E8%A3%85)
   * [linux maven 安装](https://github.com/yueheng-li/linuxLearn/wiki/linux-maven-%E5%AE%89%E8%A3%85)
