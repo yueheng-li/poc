@@ -12,9 +12,10 @@ http://ip:8087/
 ```
 
 # automyte-poc(MYTE)
-* mysql
+* mysql docker方式
+  * [docker mysql环境做成](https://github.com/yueheng-li/learn/wiki/docker-mysql%E7%8E%AF%E5%A2%83%E5%81%9A%E6%88%90)
 ```
-mysql安装(yum install mysql5.7)
+mysql安装(mysql docker方式)
 source automyte-poc\automyte-web\src\main\resources\sql
 配置文件：
 automyte-poc\automyte-web\src\main\resources\
@@ -29,8 +30,6 @@ spring.datasource.password=root
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 ######  db config end ###### 
 ```
-* mysql docker方式
-  * [docker mysql环境做成](https://github.com/yueheng-li/learn/wiki/docker-mysql%E7%8E%AF%E5%A2%83%E5%81%9A%E6%88%90)
 
 * java docker方式启动
 ```
