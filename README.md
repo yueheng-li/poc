@@ -29,7 +29,10 @@ spring.datasource.password=root
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 ######  db config end ###### 
 ```
-* docker方式启动
+* mysql docker方式
+  * [docker mysql环境做成](https://github.com/yueheng-li/learn/wiki/docker-mysql%E7%8E%AF%E5%A2%83%E5%81%9A%E6%88%90)
+
+* java docker方式启动
 ```
 使用maven package把工程build成auto-web-1.0.0-SNAPSHOT.jar
 mkdir /usr/local/docker
