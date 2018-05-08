@@ -9,9 +9,9 @@
 	<select id="findByAdminUserId" parameterType="int"
 		resultType="com.auto.myte.entity.Permission">
 		select p.*
-		from User u
+		from user u
 		LEFT JOIN role_user sru on u.eid= sru.eid
-		LEFT JOIN Role r on sru.rid = r.rid
+		LEFT JOIN role r on sru.rid = r.rid
 		LEFT JOIN permission_role spr on spr.rid = r.rid
 		LEFT JOIN permission p on p.pid =spr.pid
 		where u.eid=#{eid}

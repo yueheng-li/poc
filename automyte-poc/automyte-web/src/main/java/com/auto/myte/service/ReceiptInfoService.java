@@ -38,7 +38,7 @@ public class ReceiptInfoService {
 
 	public List<ReceiptInfo> getAllReceiptByKey(String eid, String submitDate) {
 
-		return receiptInfoMapper.selectAllByKey(eid, submitDate);
+		return receiptInfoMapper.selectAllByEid(eid);
 	}
 
 	public int insertReceiptInfo(ReceiptInfo receipt) {

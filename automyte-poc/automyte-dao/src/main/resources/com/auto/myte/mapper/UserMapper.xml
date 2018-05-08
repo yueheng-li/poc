@@ -17,9 +17,9 @@
 			,u.ename
 			,u.password
 			,r.rname
-		from User u
+		from user u
 		LEFT JOIN role_user sru on u.eid= sru.eid
-		LEFT JOIN Role r on sru.rid=r.rid
+		LEFT JOIN role r on sru.rid=r.rid
 		where u.eid= #{ename}
 	</select>
 

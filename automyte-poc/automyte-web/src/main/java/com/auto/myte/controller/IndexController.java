@@ -253,7 +253,7 @@ public class IndexController {
 				}
 				receipt.setStatus(status.toString());
 				receipt.setImage_url(propertiesConfig.getImageUrl() + fileName);
-				receipt.setSubmit_date(DateUtils.getMyteEndDateTime());
+//				receipt.setSubmit_date(DateUtils.getMyteEndDateTime());
 				int insertFlag = service.insertReceiptInfo(receipt);
 				if (insertFlag > 0) {
 					message.setInfo(fileName + " upload is ok.");// model.addAttribute("messageImage",
