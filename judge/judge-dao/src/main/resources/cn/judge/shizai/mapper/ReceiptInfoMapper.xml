@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.judge.shizai.mapper.ReceiptInfoMapper">
+
+	<select id="selectAll" resultType="cn.judge.shizai.entity.ReceiptInfo">
+		select ri.id
+		,c.category_name
+		,ri.category_id
+		,ri.amount
+		,ri.date
+		,ri.name
+		,ri.image_name
+		,ri.status
+		from receipt_info ri, category c
+		where ri.category_id = c.category_id
+	</select>
+
+	<select id="selectAllByEid" resultType="cn.judge.shizai.entity.ReceiptInfo">
+		select ri.id
+		,c.category_name
+		,ri.category_id
+		,ri.amount
+		,ri.date
+		,ri.name
+		,ri.image_name
+		,ri.status
+		,ri.location
+		from receipt_info ri, category c
+		where ri.category_id = c.category_id
+		and ri.eid = #{eid}
+	</select>
+
+	<select id="selectAllByKey" resultType="cn.judge.shizai.entity.ReceiptInfo">
+		select ri.id
+		,c.category_name
+		,ri.category_id
+		,ri.amount
+		,ri.date
+		,ri.name
+		,ri.image_name
+		,ri.status
+		,ri.location
+		from receipt_info ri, category c
+		where ri.category_id = c.category_id
+		and ri.eid = #{eid}
+		and ri.submit_date = #{submit_date}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultType="cn.judge.shizai.entity.ReceiptInfo">
+		select ri.id
+		,c.category_id
+		,ri.amount
+		,ri.date
+		,ri.name
+		,ri.eid
+		,ri.image_url
+		from receipt_info ri, category c
+		where ri.category_id = c.category_id
+		and ri.id = #{id}
+	</select>
+
+	<insert id="insertReceiptInfo" parameterType="cn.judge.shizai.entity.ReceiptInfo">
+		insert into
+		receipt_info
+		(category_id, amount, date, name, eid, image_name, image_url, status, location,submit_date)
+		values(
+		#{category_id,jdbcType=VARCHAR},
+		#{amount,jdbcType=VARCHAR},
+		#{date,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{eid,jdbcType=VARCHAR},
+		#{image_name,jdbcType=VARCHAR},
+		#{image_url,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{location,jdbcType=VARCHAR},
+		#{submit_date,jdbcType=VARCHAR});
+	</insert>
+
+
+	<update id="updateReceiptInfoByKey" parameterType="cn.judge.shizai.entity.ReceiptInfo">
+		update
+		receipt_info
+		set category_id = #{category_id,jdbcType=VARCHAR},
+		amount =
+		#{amount,jdbcType=VARCHAR},
+		status =
+		#{status,jdbcType=VARCHAR},
+		date = #{date,jdbcType=VARCHAR},
+		name =
+		#{name,jdbcType=VARCHAR}
+		where id = #{id}
+	</update>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete
+		from receipt_info
+		where id = #{id}
+	</delete>
+
+
+</mapper>

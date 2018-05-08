@@ -1,0 +1,47 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte",
+      "type": "cn.judge.shizai.config.PropertiesConfig"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.download-zip",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.excel",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.filepath",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.image-url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.loc-zip",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.run-script",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "cn.judge.shizai.config.PropertiesConfig",
+      "name": "myte.runfolder",
+      "type": "java.lang.String"
+    }
+  ]
+}
